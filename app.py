@@ -3,9 +3,17 @@
 # Web version: 1.4.0
 # Adapted for Flask web deployment
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import math
 from datetime import datetime
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -476,6 +484,66 @@ def calculate():
 
     except Exception as e:
         return f"Error in calculation: {str(e)}", 500
+
+
+@app.route('/send-email', methods=['POST'])
+def send_email():
+    try:
+        data = request.json
+        recipient_email = data.get('email')
+        html_content = data.get('html_content')
+
+        if not recipient_email or not html_content:
+            return jsonify({'success': False, 'message': 'Email and content are required'}), 400
+
+        # Get SMTP configuration from environment variables
+        smtp_server = os.getenv('SMTP_SERVER', 'smtp.sendgrid.net')
+        smtp_port = int(os.getenv('SMTP_PORT', 587))
+        smtp_username = os.getenv('SMTP_USERNAME')
+        smtp_password = os.getenv('SMTP_PASSWORD')
+        sender_email = os.getenv('SENDER_EMAIL', 'noreply@hemmy.app')
+        sender_name = os.getenv('SENDER_NAME', 'Hemmy RHC Calculator')
+
+        # Check if SMTP credentials are configured
+        if not smtp_username or not smtp_password:
+            return jsonify({
+                'success': False,
+                'message': 'Email service not configured. Please contact administrator.'
+            }), 500
+
+        # Create message
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = f'{APP_NAME} - Hemodynamic Report'
+        msg['From'] = f'{sender_name} <{sender_email}>'
+        msg['To'] = recipient_email
+
+        # Attach HTML content
+        html_part = MIMEText(html_content, 'html')
+        msg.attach(html_part)
+
+        # Send email via SMTP
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.send_message(msg)
+
+        return jsonify({'success': True, 'message': f'Report sent successfully to {recipient_email}'})
+
+    except smtplib.SMTPAuthenticationError:
+        return jsonify({
+            'success': False,
+            'message': 'Email authentication failed. Please check SMTP credentials.'
+        }), 500
+    except smtplib.SMTPException as e:
+        return jsonify({
+            'success': False,
+            'message': f'Failed to send email: {str(e)}'
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error sending email: {str(e)}'
+        }), 500
 
 
 if __name__ == '__main__':

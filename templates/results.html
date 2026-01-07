@@ -227,6 +227,22 @@
             <p class="note"><strong>NOTE:</strong> High-level guidance; depends on PH group (1–5) + full diagnostic work-up.</p>
         </section>
 
+        <!-- Email Section -->
+        <section id="emailSection" class="report-section" style="background: #f8f9fa;">
+            <h2>Email Report</h2>
+            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <input type="email" id="recipientEmail" placeholder="Enter recipient email address"
+                           style="width: 100%; padding: 10px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 1em;">
+                    <small style="color: #6c757d; display: block; margin-top: 5px;">The report will be sent as an HTML email</small>
+                </div>
+                <button onclick="sendEmail()" id="sendEmailBtn" class="btn-primary" style="white-space: nowrap;">
+                    Send Email
+                </button>
+            </div>
+            <div id="emailStatus" style="margin-top: 10px; display: none;"></div>
+        </section>
+
         <!-- Actions -->
         <div class="form-actions">
             <a href="/" class="btn-primary">New Calculation</a>
@@ -242,7 +258,113 @@
         @media print {
             .form-actions { display: none; }
             .container { max-width: 100%; }
+            #emailSection { display: none; }
         }
     </style>
+
+    <script>
+        function sendEmail() {
+            const emailInput = document.getElementById('recipientEmail');
+            const emailBtn = document.getElementById('sendEmailBtn');
+            const statusDiv = document.getElementById('emailStatus');
+            const recipientEmail = emailInput.value.trim();
+
+            // Validate email
+            if (!recipientEmail) {
+                showStatus('Please enter an email address', 'error');
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(recipientEmail)) {
+                showStatus('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Disable button and show loading
+            emailBtn.disabled = true;
+            emailBtn.textContent = 'Sending...';
+
+            // Clone and prepare HTML content for email
+            const container = document.querySelector('.container').cloneNode(true);
+
+            // Remove email section and action buttons from cloned content
+            const emailSection = container.querySelector('#emailSection');
+            if (emailSection) emailSection.remove();
+            const formActions = container.querySelectorAll('.form-actions');
+            formActions.forEach(el => el.remove());
+
+            // Get the HTML content
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>{{ app_name }} - Hemodynamic Report</title>
+                    <link rel="stylesheet" href="{{ url_for('static', filename='style.css', _external=True) }}">
+                </head>
+                <body>
+                    ${container.outerHTML}
+                </body>
+                </html>
+            `;
+
+            // Send email
+            fetch('/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: recipientEmail,
+                    html_content: htmlContent
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showStatus(data.message, 'success');
+                    emailInput.value = '';
+                } else {
+                    showStatus(data.message || 'Failed to send email', 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('Error sending email: ' + error.message, 'error');
+            })
+            .finally(() => {
+                emailBtn.disabled = false;
+                emailBtn.textContent = 'Send Email';
+            });
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('emailStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.style.padding = '10px';
+            statusDiv.style.borderRadius = '4px';
+            statusDiv.style.marginTop = '10px';
+
+            if (type === 'success') {
+                statusDiv.style.backgroundColor = '#d4edda';
+                statusDiv.style.color = '#155724';
+                statusDiv.style.border = '1px solid #c3e6cb';
+            } else {
+                statusDiv.style.backgroundColor = '#f8d7da';
+                statusDiv.style.color = '#721c24';
+                statusDiv.style.border = '1px solid #f5c6cb';
+            }
+
+            statusDiv.textContent = message;
+
+            // Auto-hide after 5 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
 </body>
 </html>
