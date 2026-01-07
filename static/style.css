@@ -370,23 +370,180 @@ footer {
     }
 }
 
-/* Print Styles */
+/* Print Styles - Optimized for Single A4 Page */
 @media print {
     body {
         background: white;
         padding: 0;
+        font-size: 8pt;
+        line-height: 1.2;
     }
 
     .container {
         box-shadow: none;
         max-width: 100%;
+        padding: 10mm;
+    }
+
+    header {
+        padding-bottom: 5px;
+        margin-bottom: 8px;
+        border-bottom: 2px solid var(--primary-color);
+    }
+
+    header h1 {
+        font-size: 14pt;
+        margin-bottom: 2px;
+    }
+
+    .subtitle {
+        font-size: 8pt;
+        margin-bottom: 2px;
+    }
+
+    .timestamp {
+        font-size: 7pt;
     }
 
     .form-actions, .btn-primary, .btn-secondary {
-        display: none;
+        display: none !important;
     }
 
+    footer {
+        margin-top: 10px;
+        padding-top: 5px;
+        font-size: 7pt;
+    }
+
+    /* Compact sections */
     .report-section {
+        margin-bottom: 8px;
+        padding: 6px 8px;
         page-break-inside: avoid;
+        border: 1px solid #ddd;
+    }
+
+    .report-section h2 {
+        font-size: 10pt;
+        margin-bottom: 5px;
+        padding-bottom: 3px;
+    }
+
+    /* Two-column layout for info grids */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px 8px;
+        font-size: 8pt;
+    }
+
+    .info-item {
+        padding: 3px 5px;
+        background: #f8f9fa;
+    }
+
+    /* Compact tables */
+    .results-table {
+        font-size: 8pt;
+        margin-top: 5px;
+    }
+
+    .results-table th {
+        padding: 4px 6px;
+        font-size: 8pt;
+        background-color: #0066cc !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .results-table td {
+        padding: 3px 6px;
+    }
+
+    .results-table tbody tr {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    /* Three-column layout for main content */
+    .print-three-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        page-break-inside: avoid;
+    }
+
+    .print-two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        page-break-inside: avoid;
+    }
+
+    .print-two-column > * {
+        page-break-inside: avoid;
+    }
+
+    /* Compact specific sections */
+    .report-section.warning p {
+        font-size: 7pt;
+        margin: 0;
+    }
+
+    .ph-result {
+        font-size: 8pt;
+        line-height: 1.3;
+        margin: 0;
+    }
+
+    .alert-list li {
+        padding: 3px 5px;
+        margin-bottom: 3px;
+        font-size: 7pt;
+    }
+
+    .alert-list li:before {
+        content: "⚠ ";
+        margin-right: 4px;
+    }
+
+    .treatment-text {
+        font-size: 7pt;
+        line-height: 1.4;
+        margin-bottom: 5px;
+    }
+
+    .note {
+        margin-top: 5px;
+        padding: 4px 6px;
+        font-size: 7pt;
+    }
+
+    /* Color preservation for flags */
+    .flag-normal { color: #28a745 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-low { color: #ffc107 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-high { color: #dc3545 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-elevated { color: #dc3545 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-ok { color: #28a745 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-borderline { color: #ffc107 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-very-high { color: #8b0000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .flag-low-severe { color: #8b0000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* Section-specific backgrounds */
+    .report-section.ph-classification {
+        background-color: #e7f3ff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .report-section.alerts {
+        background-color: #fff3cd !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .report-section.treatment {
+        background-color: #d4edda !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }

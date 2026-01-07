@@ -14,222 +14,217 @@
             <p class="timestamp">Report generated: {{ timestamp }}</p>
         </header>
 
-        <!-- Patient Information -->
+        <!-- Patient Information & Baseline Parameters Combined -->
         <section class="report-section">
-            <h2>Patient Information</h2>
+            <h2>Patient & Baseline Data{% if hb_corrected %} <span style="font-size: 0.8em; color: #856404;">(Hb auto-converted to g/L)</span>{% endif %}</h2>
             <div class="info-grid">
                 {% if patient_name %}
                 <div class="info-item"><strong>Patient:</strong> {{ patient_name }}</div>
                 {% endif %}
                 {% if patient_id %}
-                <div class="info-item"><strong>Patient ID:</strong> {{ patient_id }}</div>
+                <div class="info-item"><strong>ID:</strong> {{ patient_id }}</div>
                 {% endif %}
                 <div class="info-item"><strong>Institution:</strong> {{ institution }}</div>
-                <div class="info-item"><strong>Physician/Operator:</strong> {{ operator_name }}</div>
-            </div>
-        </section>
-
-        {% if hb_corrected %}
-        <section class="report-section warning">
-            <p><strong>Note:</strong> Hb input looked like g/dL; auto-converted to g/L.</p>
-        </section>
-        {% endif %}
-
-        <!-- Baseline Parameters -->
-        <section class="report-section">
-            <h2>Baseline Parameters</h2>
-            <div class="info-grid">
-                <div class="info-item"><strong>Height:</strong> {{ "%.1f"|format(height_cm) }} cm</div>
-                <div class="info-item"><strong>Weight:</strong> {{ "%.1f"|format(weight_kg) }} kg</div>
-                <div class="info-item"><strong>BSA:</strong> {{ "%.2f"|format(bsa) }} m²</div>
-                <div class="info-item"><strong>Hb:</strong> {{ "%.0f"|format(hb_g_L) }} g/L (={{ "%.1f"|format(hb_g_dl) }} g/dL)</div>
+                <div class="info-item"><strong>Physician:</strong> {{ operator_name }}</div>
+                <div class="info-item"><strong>Height/Weight/BSA:</strong> {{ "%.0f"|format(height_cm) }} cm / {{ "%.0f"|format(weight_kg) }} kg / {{ "%.2f"|format(bsa) }} m²</div>
+                <div class="info-item"><strong>Hb:</strong> {{ "%.0f"|format(hb_g_L) }} g/L ({{ "%.1f"|format(hb_g_dl) }} g/dL)</div>
                 <div class="info-item"><strong>SaO₂:</strong> {{ "%.1f"|format(sao2) }}%</div>
-                <div class="info-item"><strong>SvO₂ used:</strong> {{ "%.1f"|format(svo2) }}% ({{ svo2_source }})</div>
+                <div class="info-item"><strong>SvO₂:</strong> {{ "%.1f"|format(svo2) }}% ({{ svo2_source }})</div>
                 {% if pa_sat %}
-                <div class="info-item"><strong>PA sat (SpaO₂):</strong> {{ "%.1f"|format(pa_sat) }}%</div>
+                <div class="info-item"><strong>PA sat:</strong> {{ "%.1f"|format(pa_sat) }}%</div>
                 {% endif %}
                 <div class="info-item"><strong>VO₂:</strong> {{ "%.0f"|format(vo2) }} mL/min ({{ vo2_source }})</div>
             </div>
         </section>
 
-        <!-- Flow & Pump Performance -->
-        <section class="report-section">
-            <h2>Calculated Flow / Pump Performance</h2>
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>CO (Fick)</td>
-                        <td>{{ "%.2f"|format(co) }} L/min</td>
-                        <td class="flag-{{ flag_co.lower() }}">{{ flag_co }}</td>
-                    </tr>
-                    <tr>
-                        <td>CI</td>
-                        <td>{{ "%.2f"|format(ci) }} L/min/m²</td>
-                        <td class="flag-{{ flag_ci.lower() }}">{{ flag_ci }}</td>
-                    </tr>
-                    <tr>
-                        <td>SV</td>
-                        <td>{{ "%.0f"|format(sv) }} mL/beat</td>
-                        <td class="flag-{{ flag_sv.lower() }}">{{ flag_sv }}</td>
-                    </tr>
-                    <tr>
-                        <td>SVI</td>
-                        <td>{{ "%.1f"|format(svi) }} mL/beat/m²</td>
-                        <td class="flag-{{ flag_svi.lower() }}">{{ flag_svi }}</td>
-                    </tr>
-                    {% if cpo is not none and not (cpo != cpo) %}
-                    <tr>
-                        <td>CPO</td>
-                        <td>{{ "%.2f"|format(cpo) }} W</td>
-                        <td class="flag-{{ flag_cpo.lower().replace(' ', '-').replace('(', '').replace(')', '') }}">{{ flag_cpo }}</td>
-                    </tr>
-                    {% endif %}
-                    {% if cpi is not none and not (cpi != cpi) %}
-                    <tr>
-                        <td>CPI</td>
-                        <td>{{ "%.2f"|format(cpi) }} W/m²</td>
-                        <td class="flag-{{ flag_cpi.lower().replace(' ', '-').replace('(', '').replace(')', '') }}">{{ flag_cpi }}</td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </section>
+        <!-- Two-Column Layout for Tables -->
+        <div class="print-two-column">
+            <!-- Flow & Pump Performance -->
+            <section class="report-section">
+                <h2>Flow / Pump Performance</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CO (Fick)</td>
+                            <td>{{ "%.2f"|format(co) }} L/min</td>
+                            <td class="flag-{{ flag_co.lower() }}">{{ flag_co }}</td>
+                        </tr>
+                        <tr>
+                            <td>CI</td>
+                            <td>{{ "%.2f"|format(ci) }} L/min/m²</td>
+                            <td class="flag-{{ flag_ci.lower() }}">{{ flag_ci }}</td>
+                        </tr>
+                        <tr>
+                            <td>SV</td>
+                            <td>{{ "%.0f"|format(sv) }} mL/beat</td>
+                            <td class="flag-{{ flag_sv.lower() }}">{{ flag_sv }}</td>
+                        </tr>
+                        <tr>
+                            <td>SVI</td>
+                            <td>{{ "%.1f"|format(svi) }} mL/beat/m²</td>
+                            <td class="flag-{{ flag_svi.lower() }}">{{ flag_svi }}</td>
+                        </tr>
+                        {% if cpo is not none and not (cpo != cpo) %}
+                        <tr>
+                            <td>CPO</td>
+                            <td>{{ "%.2f"|format(cpo) }} W</td>
+                            <td class="flag-{{ flag_cpo.lower().replace(' ', '-').replace('(', '').replace(')', '') }}">{{ flag_cpo }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if cpi is not none and not (cpi != cpi) %}
+                        <tr>
+                            <td>CPI</td>
+                            <td>{{ "%.2f"|format(cpi) }} W/m²</td>
+                            <td class="flag-{{ flag_cpi.lower().replace(' ', '-').replace('(', '').replace(')', '') }}">{{ flag_cpi }}</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </section>
 
-        <!-- Pressures & Pulmonary Vascular Indices -->
-        <section class="report-section">
-            <h2>Pressures & Pulmonary Vascular Indices</h2>
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>RAP (mean)</td>
-                        <td>{{ "%.1f"|format(ra_mean) }} mmHg</td>
-                        <td class="flag-{{ flag_rap.lower() }}">{{ flag_rap }}</td>
-                    </tr>
-                    <tr>
-                        <td>PA</td>
-                        <td>{{ "%.1f"|format(pa_sys) }}/{{ "%.1f"|format(pa_dia) }} mmHg</td>
-                        <td>—</td>
-                    </tr>
-                    <tr>
-                        <td>mPAP (auto)</td>
-                        <td>{{ "%.1f"|format(mpap) }} mmHg</td>
-                        <td>—</td>
-                    </tr>
-                    <tr>
-                        <td>PCWP (mean)</td>
-                        <td>{{ "%.1f"|format(pcwp) }} mmHg</td>
-                        <td class="flag-{{ flag_pcwp.lower() }}">{{ flag_pcwp }}</td>
-                    </tr>
-                    <tr>
-                        <td>TPG</td>
-                        <td>{{ "%.1f"|format(tpg) }} mmHg</td>
-                        <td class="flag-{{ flag_tpg.lower() }}">{{ flag_tpg }}</td>
-                    </tr>
-                    <tr>
-                        <td>DPG</td>
-                        <td>{{ "%.1f"|format(dpg) }} mmHg</td>
-                        <td class="flag-{{ flag_dpg.lower() }}">{{ flag_dpg }}</td>
-                    </tr>
-                    <tr>
-                        <td>PVR</td>
-                        <td>{{ "%.2f"|format(pvr_wu) }} WU ({{ "%.0f"|format(pvr_dyn) }} dyn·s/cm⁵)</td>
-                        <td class="flag-{{ flag_pvr.lower() }}">{{ flag_pvr }}</td>
-                    </tr>
-                    <tr>
-                        <td>PVR Severity</td>
-                        <td>—</td>
-                        <td class="flag-severity">{{ flag_pvr_sev }}</td>
-                    </tr>
-                    <tr>
-                        <td>PVRI</td>
-                        <td>{{ "%.2f"|format(pvri) }} WU·m²</td>
-                        <td>—</td>
-                    </tr>
-                    <tr>
-                        <td>PAPi</td>
-                        <td>{{ "%.2f"|format(papi) }}</td>
-                        <td class="flag-{{ flag_papi.lower() }}">{{ flag_papi }}</td>
-                    </tr>
-                    <tr>
-                        <td>RAP/PCWP</td>
-                        <td>{{ "%.2f"|format(rap_pcwp) }}</td>
-                        <td class="flag-{{ flag_rap_pcwp.lower().replace(' ', '-') }}">{{ flag_rap_pcwp }}</td>
-                    </tr>
-                    <tr>
-                        <td>PA Compliance (SV/PP)</td>
-                        <td>{{ "%.2f"|format(pac) }} mL/mmHg</td>
-                        <td class="flag-{{ flag_pac.lower() }}">{{ flag_pac }}</td>
-                    </tr>
-                    <tr>
-                        <td>RVSWI</td>
-                        <td>{{ "%.1f"|format(rvswi) }} g·m/m²/beat</td>
-                        <td class="flag-{{ flag_rvswi.lower() }}">{{ flag_rvswi }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+            <!-- Pressures & Pulmonary Vascular Indices -->
+            <section class="report-section">
+                <h2>Pressures & Pulmonary Indices</h2>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Value</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>RAP</td>
+                            <td>{{ "%.1f"|format(ra_mean) }} mmHg</td>
+                            <td class="flag-{{ flag_rap.lower() }}">{{ flag_rap }}</td>
+                        </tr>
+                        <tr>
+                            <td>PA sys/dia</td>
+                            <td>{{ "%.0f"|format(pa_sys) }}/{{ "%.0f"|format(pa_dia) }}</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>mPAP</td>
+                            <td>{{ "%.1f"|format(mpap) }} mmHg</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>PCWP</td>
+                            <td>{{ "%.1f"|format(pcwp) }} mmHg</td>
+                            <td class="flag-{{ flag_pcwp.lower() }}">{{ flag_pcwp }}</td>
+                        </tr>
+                        <tr>
+                            <td>TPG</td>
+                            <td>{{ "%.1f"|format(tpg) }} mmHg</td>
+                            <td class="flag-{{ flag_tpg.lower() }}">{{ flag_tpg }}</td>
+                        </tr>
+                        <tr>
+                            <td>DPG</td>
+                            <td>{{ "%.1f"|format(dpg) }} mmHg</td>
+                            <td class="flag-{{ flag_dpg.lower() }}">{{ flag_dpg }}</td>
+                        </tr>
+                        <tr>
+                            <td>PVR</td>
+                            <td>{{ "%.2f"|format(pvr_wu) }} WU</td>
+                            <td class="flag-{{ flag_pvr.lower() }}">{{ flag_pvr }}</td>
+                        </tr>
+                        <tr>
+                            <td>PVR Severity</td>
+                            <td>—</td>
+                            <td class="flag-severity">{{ flag_pvr_sev }}</td>
+                        </tr>
+                        <tr>
+                            <td>PVRI</td>
+                            <td>{{ "%.2f"|format(pvri) }} WU·m²</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>PAPi</td>
+                            <td>{{ "%.2f"|format(papi) }}</td>
+                            <td class="flag-{{ flag_papi.lower() }}">{{ flag_papi }}</td>
+                        </tr>
+                        <tr>
+                            <td>RAP/PCWP</td>
+                            <td>{{ "%.2f"|format(rap_pcwp) }}</td>
+                            <td class="flag-{{ flag_rap_pcwp.lower().replace(' ', '-') }}">{{ flag_rap_pcwp }}</td>
+                        </tr>
+                        <tr>
+                            <td>PA Compliance</td>
+                            <td>{{ "%.2f"|format(pac) }} mL/mmHg</td>
+                            <td class="flag-{{ flag_pac.lower() }}">{{ flag_pac }}</td>
+                        </tr>
+                        <tr>
+                            <td>RVSWI</td>
+                            <td>{{ "%.1f"|format(rvswi) }} g·m/m²</td>
+                            <td class="flag-{{ flag_rvswi.lower() }}">{{ flag_rvswi }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
 
-        <!-- Shunt Assessment -->
-        <section class="report-section">
-            <h2>Shunt Assessment (Qp/Qs)</h2>
-            {% if qpqs != qpqs %}
-            <p><strong>Qp/Qs:</strong> N/A ({{ qpqs_note }})</p>
+        <!-- Shunt & Systemic Combined -->
+        <div class="print-two-column">
+            <section class="report-section">
+                <h2>Shunt (Qp/Qs)</h2>
+                {% if qpqs != qpqs %}
+                <p style="margin: 0;"><strong>Qp/Qs:</strong> N/A</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.9em;">{{ qpqs_note }}</p>
+                {% else %}
+                <p style="margin: 0;"><strong>Qp/Qs:</strong> {{ "%.2f"|format(qpqs) }}</p>
+                <p style="margin: 3px 0 0 0; font-size: 0.9em;">{{ qpqs_note }}</p>
+                {% endif %}
+                <p style="margin: 5px 0 0 0;">{{ shunt_text }}</p>
+            </section>
+
+            {% if map_mmHg is not none %}
+            <section class="report-section">
+                <h2>Systemic Parameters</h2>
+                <div class="info-grid" style="grid-template-columns: 1fr;">
+                    <div class="info-item"><strong>BP:</strong> {{ "%.0f"|format(sbp) }}/{{ "%.0f"|format(dbp) }} mmHg (MAP {{ "%.1f"|format(map_mmHg) }})</div>
+                    <div class="info-item"><strong>SVR:</strong> {{ "%.2f"|format(svr_wu) }} WU ({{ "%.0f"|format(svr_dyn) }} dyn·s/cm⁵)</div>
+                    <div class="info-item"><strong>SVRI:</strong> {{ "%.2f"|format(svri) }} WU·m²</div>
+                </div>
+            </section>
             {% else %}
-            <p><strong>Qp/Qs:</strong> {{ "%.2f"|format(qpqs) }} ({{ qpqs_note }})</p>
+            <div></div>
             {% endif %}
-            <p>{{ shunt_text }}</p>
-        </section>
+        </div>
 
-        <!-- Systemic (if available) -->
-        {% if map_mmHg is not none %}
-        <section class="report-section">
-            <h2>Systemic Parameters</h2>
-            <div class="info-grid">
-                <div class="info-item"><strong>SBP/DBP:</strong> {{ "%.0f"|format(sbp) }}/{{ "%.0f"|format(dbp) }} mmHg</div>
-                <div class="info-item"><strong>MAP:</strong> {{ "%.1f"|format(map_mmHg) }} mmHg</div>
-                <div class="info-item"><strong>SVR:</strong> {{ "%.2f"|format(svr_wu) }} WU ({{ "%.0f"|format(svr_dyn) }} dyn·s/cm⁵)</div>
-                <div class="info-item"><strong>SVRI:</strong> {{ "%.2f"|format(svri) }} WU·m²</div>
-            </div>
-        </section>
-        {% endif %}
+        <!-- PH Classification & Alerts Combined -->
+        <div class="print-two-column">
+            <section class="report-section ph-classification">
+                <h2>ESC/ERS PH Classification</h2>
+                <p class="ph-result">{{ ph_class }}</p>
+            </section>
 
-        <!-- PH Classification -->
-        <section class="report-section ph-classification">
-            <h2>Final ESC/ERS PH Classification (Hemodynamics)</h2>
-            <p class="ph-result">{{ ph_class }}</p>
-        </section>
-
-        <!-- Alerts -->
-        {% if alerts %}
-        <section class="report-section alerts">
-            <h2>Advanced HF/Transplant Alerts</h2>
-            <ul class="alert-list">
-                {% for alert in alerts %}
-                <li>{{ alert }}</li>
-                {% endfor %}
-            </ul>
-        </section>
-        {% endif %}
+            {% if alerts %}
+            <section class="report-section alerts">
+                <h2>HF/Tx Alerts</h2>
+                <ul class="alert-list">
+                    {% for alert in alerts %}
+                    <li>{{ alert }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% else %}
+            <div></div>
+            {% endif %}
+        </div>
 
         <!-- Treatment Recommendations -->
         <section class="report-section treatment">
             <h2>Treatment Summary</h2>
             <div class="treatment-text">{{ treatment_text|replace('\n', '<br>')|safe }}</div>
-            <p class="note"><strong>NOTE:</strong> Treatment section is high-level and depends on PH group (1–5) + full diagnostic work-up.</p>
+            <p class="note"><strong>NOTE:</strong> High-level guidance; depends on PH group (1–5) + full diagnostic work-up.</p>
         </section>
 
         <!-- Actions -->
