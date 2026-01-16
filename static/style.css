@@ -13,6 +13,148 @@
     --text-muted: #6c757d;
 }
 
+/* Pip-Boy Theme (Fallout-inspired retro CRT terminal) */
+body.theme-pipboy {
+    --primary-color: #00ff00;
+    --secondary-color: #33ff33;
+    --success-color: #00ff00;
+    --warning-color: #88ff00;
+    --danger-color: #ffff00;
+    --info-color: #00ff88;
+    --light-bg: #0a1a0a;
+    --border-color: #00aa00;
+    --text-color: #00ff00;
+    --text-muted: #00aa00;
+    background-color: #000000;
+}
+
+body.theme-pipboy .container {
+    background: #0a0f0a;
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.3), inset 0 0 100px rgba(0, 255, 0, 0.05);
+    border: 2px solid #00aa00;
+}
+
+body.theme-pipboy h1,
+body.theme-pipboy h2,
+body.theme-pipboy h3 {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.8), 0 0 20px rgba(0, 255, 0, 0.4);
+}
+
+body.theme-pipboy .form-section,
+body.theme-pipboy .report-section {
+    background: #0f1a0f;
+    border-left-color: #00ff00;
+    border-color: #00aa00;
+    box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+}
+
+body.theme-pipboy input {
+    background: #000000;
+    color: #00ff00;
+    border-color: #00aa00;
+}
+
+body.theme-pipboy input:focus {
+    border-color: #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+body.theme-pipboy .btn-primary {
+    background-color: #00aa00;
+    color: #000000;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+body.theme-pipboy .btn-primary:hover {
+    background-color: #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.8);
+}
+
+body.theme-pipboy .btn-secondary {
+    background-color: #003300;
+    color: #00ff00;
+    border: 1px solid #00aa00;
+}
+
+body.theme-pipboy .btn-secondary:hover {
+    background-color: #005500;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+body.theme-pipboy .results-table thead {
+    background-color: #003300;
+}
+
+body.theme-pipboy .results-table tbody tr {
+    border-bottom-color: #003300;
+}
+
+body.theme-pipboy .results-table tbody tr:hover {
+    background-color: #0f1a0f;
+}
+
+body.theme-pipboy .info-item {
+    background: #0f1a0f;
+    border: 1px solid #003300;
+}
+
+body.theme-pipboy .report-section.ph-classification {
+    background-color: #0a1a0a !important;
+}
+
+body.theme-pipboy .report-section.alerts {
+    background-color: #1a1a00 !important;
+    border-left-color: #ffff00;
+}
+
+body.theme-pipboy .report-section.treatment {
+    background-color: #0a1a0a !important;
+}
+
+body.theme-pipboy .alert-list li {
+    background: #0f1a0f;
+    border-left-color: #ffff00;
+}
+
+body.theme-pipboy .alert-list li:before {
+    color: #ffff00;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.theme-toggle:hover {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 102, 204, 0.5);
+}
+
+body.theme-pipboy .theme-toggle {
+    background: #003300;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+body.theme-pipboy .theme-toggle:hover {
+    background-color: #00aa00;
+    color: #000000;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;

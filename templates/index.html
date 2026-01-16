@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="container">
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">PIP-BOY MODE</button>
         <header>
             <h1>{{ app_name }} - Right Heart Catheterization Hemodynamics</h1>
             <p class="subtitle">{{ app_author }} | Version {{ app_version }}</p>
@@ -157,5 +158,34 @@
             <p>&copy; 2024-2026 {{ app_author }}. For clinical decision support.</p>
         </footer>
     </div>
+
+    <script>
+        // Theme switching functionality
+        function toggleTheme() {
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeToggle');
+
+            if (body.classList.contains('theme-pipboy')) {
+                body.classList.remove('theme-pipboy');
+                toggleBtn.textContent = 'PIP-BOY MODE';
+                localStorage.setItem('theme', 'standard');
+            } else {
+                body.classList.add('theme-pipboy');
+                toggleBtn.textContent = 'STANDARD MODE';
+                localStorage.setItem('theme', 'pipboy');
+            }
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const toggleBtn = document.getElementById('themeToggle');
+
+            if (savedTheme === 'pipboy') {
+                document.body.classList.add('theme-pipboy');
+                toggleBtn.textContent = 'STANDARD MODE';
+            }
+        });
+    </script>
 </body>
 </html>
